@@ -67,19 +67,36 @@ const Signup = () => {
                      <p className='font-inter font-semibold text-red-600 text-base absolute top-[173px] left-[341px] '>
                        {nameError} 
                      </p>
+                     {nameError ?
+                     <input name='fullname' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-red-500 rounded-lg my-4' placeholder='Name here' type="text" />
+                     :
                      <input name='fullname' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-strok rounded-lg my-4' placeholder='Name here' type="text" />
+                    
+                    } 
 
                      <label className='font-inter font-semibold text-dark text-base' htmlFor="">Email</label>
                      <p className='font-inter font-semibold text-red-600 text-base absolute top-[286px] left-[341px] '>
                        {emailError} 
                      </p>
+                     {emailError ?
+                     
+                     <input name='email' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-red-500 rounded-lg my-4' placeholder='Enter your mail' type="text" />
+                     :
                      <input name='email' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-strok rounded-lg my-4' placeholder='Enter your mail' type="text" />
+                     
+                     }
 
                      <label className='font-inter font-semibold text-dark text-base' htmlFor="">Password</label>
                      <p className='font-inter font-semibold text-red-600 text-base absolute top-[399px] left-[341px] '>
                        {passError} 
                      </p>
+                     {passError ?
+                     
+                     <input name='password' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-red-500 rounded-lg my-4' placeholder='Password' type="password" />
+                     :
                      <input name='password' onChange={handleChange} className='block w-full py-4 pl-3 border border-solid border-strok rounded-lg my-4' placeholder='Password' type="password" />
+                    
+                    } 
 
                      <div className='flex item-center justify-between'>
                         <div className='flex items-center'>
