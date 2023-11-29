@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
 import mainimg from "../assets/mainimg.png"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { Vortex } from  'react-loader-spinner'
+
 
 const Signup = () => {
+    const auth = getAuth();
+    let navigate = useNavigate()
+
+    let [loader,setLoader]=useState(false)
+
     let [nameError,setNameError]=useState()
     let [emailError,setEmailError]=useState()
     let [passError,setPassError]=useState()
@@ -53,6 +61,25 @@ const Signup = () => {
 
             }
         }
+        setLoader(true)
+        createUserWithEmailAndPassword(auth, inputValue.email, inputValue.password )
+            .then((userCredential) => {
+                 
+                // navigate("/")
+                setLoader(false)
+                
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode);
+                console.log(errorMessage);
+                if(errorCode.includes("already")){
+                    setEmailError("Email already in use")
+                }
+                setLoader(false)
+                
+            });
     }
 
   return (
@@ -105,7 +132,23 @@ const Signup = () => {
                         </div>
                         
                      </div>
+                     {loader ? 
+                     <button>
+                     <Vortex
+                        visible={true}
+                        height="80"
+                        width="0"
+                        ariaLabel="vortex-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="vortex-wrapper"
+                        colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
+                        />
+                     </button>
+                    :
+                    
                      <button onClick={handleSignup} className='py-3 font-inter font-semibold text-white text-xl w-full bg-primary rounded-lg my-6 hover:bg-redient2 hover:text-primary duration-300'>Sign Up</button>
+                    }
+                     
                      <div className='flex gap-x-2'>
                         <p className='font-inter font-normal text-dark60 text-base'> have an account?</p>
                         <Link to={"/"}>
