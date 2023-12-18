@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import mainimg from "../assets/mainimg.png"
 import { Link, useNavigate } from 'react-router-dom'
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,sendEmailVerification } from "firebase/auth";
 import { Vortex } from  'react-loader-spinner'
+import { toast } from 'react-toastify';
 
 
 const Signup = () => {
@@ -64,9 +65,13 @@ const Signup = () => {
         setLoader(true)
         createUserWithEmailAndPassword(auth, inputValue.email, inputValue.password )
             .then((userCredential) => {
-                 
-                // navigate("/")
-                setLoader(false)
+                sendEmailVerification(auth.currentUser)
+                .then(() => {
+                    
+                    navigate("/")
+                    setLoader(false)
+                    toast.info("A Varification email send on your mail. please verify it")
+                });
                 
             })
             .catch((error) => {
@@ -137,7 +142,7 @@ const Signup = () => {
                      <Vortex
                         visible={true}
                         height="80"
-                        width="0"
+                        width="80"
                         ariaLabel="vortex-loading"
                         wrapperStyle={{}}
                         wrapperClass="vortex-wrapper"

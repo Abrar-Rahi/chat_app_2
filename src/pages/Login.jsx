@@ -1,10 +1,26 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import mainimg from "../assets/mainimg.png"
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Vortex } from  'react-loader-spinner'
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { usersLoginInfo } from '../slices/userSlice';
 
 const Login = () => {
+
+    
+    let navigate = useNavigate()
+    let dispatch = useDispatch()
+    let userInfo = useSelector(state=>state.userInfo.value)
+    
+    const auth = getAuth();
+    let [loader,setLoader]=useState(false)
+
     let [emailError,setEmailError]=useState()
     let [passError,setPassError]=useState()
+    let [credentialError,setCredentialError]=useState()
+
     let [inputValue,setInputValue]=useState({
         email : "",
         password : ""
@@ -17,31 +33,61 @@ const Login = () => {
       })
     }
     let handleLogin = ()=>{
-        if(inputValue.email==""){
-            setEmailError("What's your Email?")
-        }else{
-            var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
-            if(!pattern.test(inputValue.email)){
+        // if(inputValue.email==""){
+        //     setEmailError("What's your Email?")
+        // }else{
+        //     var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+        //     if(!pattern.test(inputValue.email)){
 
-                setEmailError("Email not valid")
-            }else{
-                setEmailError("")
-            }
+        //         setEmailError("Email not valid")
+        //     }else{
+        //         setEmailError("")
+        //     }
             
-        }
-        if(inputValue.password==""){
-            setPassError("What's your password?")
-        }else{
-            let character = /(?=.{6,})/
-            if(!character.test(inputValue.password)){
+        // }
+        // if(inputValue.password==""){
+        //     setPassError("What's your password?")
+        // }else{
+        //     let character = /(?=.{6,})/
+        //     if(!character.test(inputValue.password)){
 
-                setPassError("contain at least 6 digit")
+        //         setPassError("contain at least 6 digit")
+        //     }else{
+        //         setPassError("")
+
+        //     }
+        // }
+        setLoader(true)
+        signInWithEmailAndPassword(auth, inputValue.email, inputValue.password)
+        .then((userCredential) => {
+            
+            
+            
+                navigate("/home") 
+                setLoader(false)
+            
+            dispatch(usersLoginInfo(userCredential.user))
+            localStorage.setItem("users", JSON.stringify(userCredential.user))
+            
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            if(errorCode.includes("credential")){
+                setCredentialError("invalid credential")
             }else{
-                setPassError("")
-
+                setCredentialError("")
             }
-        }
+            console.log(errorCode);
+            setLoader(false)
+        });
     }
+
+    useEffect(()=>{
+        if(userInfo != null){
+          navigate("/home")
+        }
+      },[])
   return (
     <div>
         <div className='flex'>
@@ -49,7 +95,9 @@ const Login = () => {
                 <div className='w-8/12 ml-10 relative'>
                      <h2 className='font-inter font-bold text-primary text-3xl'>Welcome To Chatt.</h2>
                      <h4 className='font-inter font-bold text-dark text-2xl my-6'>Log In</h4>
-
+                     <p className='font-inter font-semibold text-red-600 text-xl absolute top-[228px] left-[341px] '>
+                       {credentialError} 
+                     </p>
                      <label className='font-inter font-semibold text-dark text-base' htmlFor="">Email</label>
                      <p className='font-inter font-semibold text-red-600 text-base absolute top-[173px] left-[341px] '>
                        {emailError} 
@@ -81,7 +129,23 @@ const Login = () => {
                         </div>
                         <p className='font-inter font-normal text-primary text-base'>Forgot Password?</p>
                      </div>
+
+                     {loader ? 
+                     <button>
+                     <Vortex
+                        visible={true}
+                        height="80"
+                        width="80"
+                        ariaLabel="vortex-loading"
+                        wrapperStyle={{}}
+                        wrapperClass="vortex-wrapper"
+                        colors={['red', 'green', 'blue', 'yellow', 'orange', 'purple']}
+                        />
+                     </button>
+                    :
+                    
                      <button onClick={handleLogin} className='py-3 font-inter font-semibold text-white text-xl w-full bg-primary rounded-lg my-6 hover:bg-redient2 hover:text-primary duration-300'>Log in</button>
+                    }
                      <div className='flex gap-x-2'>
                         <p className='font-inter font-normal text-dark60 text-base'>Dont’t have an account?</p>
                         <Link to={"/signup"}>
