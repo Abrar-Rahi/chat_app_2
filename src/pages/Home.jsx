@@ -1,26 +1,19 @@
 import React, { useEffect } from 'react'
-import { getAuth, signOut } from "firebase/auth";
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
-import { usersLoginInfo } from '../slices/userSlice';
 import { useSelector } from 'react-redux';
+import Chat from '../components/Chat';
+import Group from '../components/Group';
+import Friends from '../components/Friends';
+import People from '../components/People';
+import FriendReq from '../components/FriendReq';
+import BlockList from '../components/BlockList';
+
 
 const Home = () => {
-  const auth = getAuth();
-  let navigate = useNavigate()
-  let dispatch = useDispatch()
+  
   let userInfo = useSelector(state=>state.userInfo.value)
-  console.log(userInfo);
+  
 
-  let handleLogOut = ()=>{
-    signOut(auth).then(() => {
-     dispatch(usersLoginInfo(null))
-     localStorage.removeItem("users")
-      navigate("/")
-      toast.success("Logout successfull")
-    })
-  }
+ 
 
   useEffect(()=>{
     if(userInfo == null){
@@ -28,8 +21,25 @@ const Home = () => {
     }
   },[])
   return (
-    <div>
-      <button onClick={handleLogOut}>Logout</button>
+    <div className='flex gap-x-10 gap-y-10 flex-wrap'>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <Chat/>
+      </div>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <Group/>
+      </div>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <Friends/>
+      </div>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <People/>
+      </div>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <FriendReq/>
+      </div>
+      <div className='w-[31%] shadow-lg rounded-sm p-4 overflow-y-scroll h-[500px]'>
+        <BlockList/>
+      </div>
     </div>
   )
 }

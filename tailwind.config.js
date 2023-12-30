@@ -13,12 +13,17 @@ export default {
         'dark': '#222222',
         'dark80': '#4E4E4E',
         'dark60': '#7A7A7A',
+        
         'strok': '#D3D3D3',
       },
       fontFamily: {
         'inter': ['Inter'],
         
-      }
+      },
+      backgroundImage: {
+        'heroimg': "url('./assets/mainimg.png')",
+        
+      },
     },
   },
   plugins: [],

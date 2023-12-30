@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import mainimg from "../assets/mainimg.png"
 import { Link, useNavigate } from 'react-router-dom'
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
-import { getAuth, createUserWithEmailAndPassword,sendEmailVerification } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword,sendEmailVerification,updateProfile } from "firebase/auth";
 import { Vortex } from  'react-loader-spinner'
 import { toast } from 'react-toastify';
+import { getDatabase, ref, set } from "firebase/database";
 
 
 const Signup = () => {
+    const db = getDatabase();
     const auth = getAuth();
     let navigate = useNavigate()
 
@@ -65,14 +67,22 @@ const Signup = () => {
         setLoader(true)
         createUserWithEmailAndPassword(auth, inputValue.email, inputValue.password )
             .then((userCredential) => {
-                sendEmailVerification(auth.currentUser)
-                .then(() => {
-                    
-                    navigate("/")
-                    setLoader(false)
-                    toast.info("A Varification email send on your mail. please verify it")
-                });
-                
+                updateProfile(auth.currentUser, {
+                    displayName: inputValue.fullname,
+                    photoURL: "https://firebasestorage.googleapis.com/v0/b/chat-app-2-c42f2.appspot.com/o/profile.png?alt=media&token=72f75a73-837c-44b7-a614-9e7676c04e41"
+                  }).then(() => {
+                      // sendEmailVerification(auth.currentUser)
+                      // .then(() => {
+                          set(ref(db, 'users/' + userCredential.user.uid), {
+                              username: inputValue.fullname,
+                              email: userCredential.user.email,
+                              profile_picture : "https://firebasestorage.googleapis.com/v0/b/chat-app-2-c42f2.appspot.com/o/profile.png?alt=media&token=72f75a73-837c-44b7-a614-9e7676c04e41"
+                            })
+                                navigate("/")
+                                setLoader(false)
+                                toast.info("A Varification email send on your mail. please verify it")
+                      // });
+                  })
             })
             .catch((error) => {
                 const errorCode = error.code;

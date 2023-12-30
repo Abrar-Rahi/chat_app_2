@@ -63,7 +63,7 @@ const Login = () => {
             
             
             
-                navigate("/home") 
+                navigate("/user/home") 
                 setLoader(false)
             
             dispatch(usersLoginInfo(userCredential.user))
@@ -78,14 +78,14 @@ const Login = () => {
             }else{
                 setCredentialError("")
             }
-            console.log(errorCode);
+            
             setLoader(false)
         });
     }
 
     useEffect(()=>{
         if(userInfo != null){
-          navigate("/home")
+          navigate("/user/home")
         }
       },[])
   return (
@@ -127,7 +127,9 @@ const Login = () => {
                             <input type="checkbox" name="" id=""  className='mr-4 w-6 h-6'/>
                             <label className='font-inter font-normal text-dark80 text-base' htmlFor="">Remember Me</label>
                         </div>
+                      <Link to={"/resetmail"}>
                         <p className='font-inter font-normal text-primary text-base'>Forgot Password?</p>
+                      </Link>
                      </div>
 
                      {loader ? 
@@ -144,7 +146,7 @@ const Login = () => {
                      </button>
                     :
                     
-                     <button onClick={handleLogin} className='py-3 font-inter font-semibold text-white text-xl w-full bg-primary rounded-lg my-6 hover:bg-redient2 hover:text-primary duration-300'>Log in</button>
+                     <button onClick={handleLogin} className='py-3 font-inter font-semibold text-white text-xl w-full bg-primary rounded-lg my-6 hover:bg-redient2 hover:text-primary duration-300 '>Log in</button>
                     }
                      <div className='flex gap-x-2'>
                         <p className='font-inter font-normal text-dark60 text-base'>Dont’t have an account?</p>
