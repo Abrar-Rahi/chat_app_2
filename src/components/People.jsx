@@ -5,6 +5,7 @@ import { getDatabase, ref, onValue,set,push } from "firebase/database";
 import { useSelector } from 'react-redux';
 import Button from './Button';
 import { toast } from 'react-toastify';
+import moment from 'moment';
 
 const People = () => {
   const db = getDatabase();
@@ -16,7 +17,8 @@ const People = () => {
   let [frReq,setFrReq] = useState([])
   let [friends,setFriends] = useState([])
   let [block,setBlock] = useState([])
-
+  
+  
   useEffect(()=>{
     const userRef = ref(db, 'users');
     onValue(userRef, (snapshot) => {
@@ -45,6 +47,7 @@ const People = () => {
       whoSendPhoto : userInfo.photoURL,
       whoReceive : item.username,
       whoReceiveId : item.userId,
+      sendtime : moment().format('LT')
     }).then(()=>{
       toast("request sended")
     })
@@ -99,12 +102,12 @@ const People = () => {
             <h5 className='font-inter font-semibold text-dark text-lg'>{item.username}</h5>
           {frReq.includes(userInfo.uid+item.userId) || frReq.includes(item.userId+userInfo.uid) ?
             <div>
-            <Button name="pending" className="bg-orange-200" type="disabled"/>
+            <Button name="pending" className="bg-orange-200 " type="disabled"/>
             </div>
           :
           friends.includes(userInfo.uid+item.userId) || friends.includes(item.userId+userInfo.uid) ?
             <div>
-            <Button name="Friends" className="bg-green-800" type="disabled"/>
+            <Button name="Friends" className="bg-green-800 " type="disabled"/>
             </div>
 
           :

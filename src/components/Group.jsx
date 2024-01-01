@@ -14,6 +14,7 @@ const Group = () => {
   let [groupCreatePopup, setGroupCreatePopup] = useState(false)
   let [newGroup, setNewGroup] = useState("")
   let [groupList, setGroupList] = useState([])
+  let [groupReqCheck, setGroupReqCheck] = useState([])
 
   let handleNewGroupCreate =()=>{
     set(push(ref(db, 'group')), {
@@ -24,6 +25,7 @@ const Group = () => {
     }).then(()=>{
       toast("create Group")
       setGroupCreatePopup(false)
+      setGroupPopup(false)
     })
   }
 
@@ -35,6 +37,38 @@ const Group = () => {
         arr.push({...item.val(), groupId: item.key})
      })
      setGroupList(arr)
+  });
+  },[])
+  
+
+  let handleJoinGroupRequest = (item)=>{
+      
+      set(push(ref(db, 'grouprequest')), {
+       whoJoin : userInfo.displayName,
+       whoJoinId : userInfo.uid,
+       whoJoinPic : userInfo.photoURL,
+       groupId : item.groupId,
+       groupAdmin : item.admin,
+       groupAdminId : item.adminId,
+       groupPic : item.groupPic,
+       groupName : item.groupName
+      }).then(()=>{
+        
+      })
+  }
+
+  useEffect(()=>{
+    const groupreqRef = ref(db, 'grouprequest');
+    onValue(groupreqRef, (snapshot) => {
+      let arr=[]
+     snapshot.forEach(item=>{
+      if(userInfo.uid == item.val().whoJoinId){
+
+        arr.push(item.val().groupId , item.val().whoJoinId)
+      }
+      
+     })
+     setGroupReqCheck(arr)
   });
   },[])
 
@@ -75,7 +109,8 @@ const Group = () => {
         <>
           <input type="text" className='px-3 py-2 w-full border border-solid border-strok rounded-lg mt-4 mb-5  ' placeholder='Search' />
           {groupList.map(item=>(
-          <>
+            <>
+            
           <div className='flex gap-x-2 items-center mb-4'>
             <img src={item.groupPic} className='w-12 h-12 rounded-full' />
             <div>
@@ -87,8 +122,14 @@ const Group = () => {
             <Button name="my group" className="last:ml-10 bg-green-800 opacity-25" type="disabled"/>
            </div>
           :
-          
-            <div>
+        
+          groupReqCheck.includes(item.groupId) && groupReqCheck.includes(userInfo.uid)?
+          <div >
+          <Button name="pending" className="last:ml-10 bg-red-800"/>
+          </div>
+          :
+
+            <div onClick={()=>handleJoinGroupRequest(item)}>
              <Button name="join group" className="last:ml-10 bg-green-800"/>
             </div>
           }

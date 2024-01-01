@@ -58,6 +58,7 @@ const FriendReq = () => {
              <div onClick={()=>handleDeleteFriendRequest(item)}>
               <Button name="Delete" className="bg-red-500"/>
             </div>
+            <p>{item.sendtime}</p>
              
           </div>
           ))}
